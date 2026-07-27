@@ -6,20 +6,20 @@
 
 ---
 
-## 🎨 Features
+##  Features
 * **Curated Prompt Engine:** Randomly generates literary prompts ranging from classical themes to contemporary poetry constraints.
 * **Tailored Aesthetic UI:** Custom-styled layout featuring classic typography, a warm paper motif, and a refined navy-and-gold color scheme.
 * **Instant Inspiration:** One-click generation designed for lightweight, low-friction creative flow.
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 * **Language:** Python 3
 * **GUI Framework:** Tkinter (Native Desktop Interface)
 
 ---
 
-## 🚀 How to Run Locally
+##  How to Run Locally
 
 ### Prerequisites
 Make sure you have **Python 3** installed on your system.
