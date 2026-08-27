@@ -1,121 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap');
+
 :root {
-    --bg-navy: #1B263B;
-    --paper-cream: #FDFBF7;
-    --text-dark: #2B2D42;
-    --accent-green: #2A4836;
-    --accent-gold: #C5A059;
-    --border-color: #E2D7C5;
-    --card-bg: #FFFFFF;
+    --bg-dark: #101618;
+    --card-bg: #1a2425;
+    --card-inner: #222f30;
+    --forest-green: #2c4238;
+    --moss-green: #425f4a;
+    --glow-gold: #ffd166;
+    --lantern-amber: #ff9f1c;
+    --text-light: #e6ede8;
+    --text-muted: #95a79a;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    margin: 0;
-    padding: 30px 20px;
-    background-color: var(--bg-navy);
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(255, 209, 102, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(255, 159, 28, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(32, 51, 40, 0.5) 0%, transparent 60%);
+    color: var(--text-light);
     font-family: 'Poppins', sans-serif;
-    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 80px 20px 40px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* --- HANGING LANTERNS (LEFT & RIGHT) --- */
+body::before, body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    width: 32px;
+    height: 48px;
+    background: radial-gradient(circle at center, var(--glow-gold) 20%, var(--lantern-amber) 70%);
+    border-radius: 8px 8px 14px 14px;
+    box-shadow: 
+        0 0 20px var(--glow-gold),
+        0 0 40px var(--lantern-amber),
+        0 0 60px rgba(255, 159, 28, 0.4);
+    z-index: 10;
+    pointer-events: none;
+    animation: swayLantern 4s ease-in-out infinite alternate;
+}
+
+/* Left Lantern + Wire */
+body::before {
+    left: 8%;
+    border-top: 3px solid #1a1a1a;
+    box-shadow: 
+        0 -40px 0 0 #333, /* The hanging cord */
+        0 0 25px var(--glow-gold),
+        0 0 50px var(--lantern-amber);
+}
+
+/* Right Lantern + Wire */
+body::after {
+    right: 8%;
+    animation-delay: -2s;
+    box-shadow: 
+        0 -40px 0 0 #333, /* The hanging cord */
+        0 0 25px var(--glow-gold),
+        0 0 50px var(--lantern-amber);
+}
+
+@keyframes swayLantern {
+    0% { transform: rotate(-3deg) translateY(0); }
+    100% { transform: rotate(3deg) translateY(4px); }
+}
+
+/* --- FLOATING FIREFLIES --- */
+.fireflies {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.firefly {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--glow-gold);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--glow-gold), 0 0 12px var(--lantern-amber);
+    animation: drift 6s infinite ease-in-out alternate;
+}
+
+.firefly:nth-child(1) { top: 15%; left: 20%; animation-duration: 7s; animation-delay: 0s; }
+.firefly:nth-child(2) { top: 35%; left: 75%; animation-duration: 9s; animation-delay: 1s; }
+.firefly:nth-child(3) { top: 60%; left: 15%; animation-duration: 6s; animation-delay: 2s; }
+.firefly:nth-child(4) { top: 75%; left: 80%; animation-duration: 8s; animation-delay: 0.5s; }
+.firefly:nth-child(5) { top: 25%; left: 85%; animation-duration: 10s; animation-delay: 3s; }
+.firefly:nth-child(6) { top: 80%; left: 35%; animation-duration: 7s; animation-delay: 1.5s; }
+
+@keyframes drift {
+    0% {
+        opacity: 0.2;
+        transform: translateY(0) translateX(0) scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-20px) translateX(15px) scale(1.2);
+    }
+    100% {
+        opacity: 0.3;
+        transform: translateY(-40px) translateX(-10px) scale(0.9);
+    }
 }
 
 .container {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 360px;
-    gap: 25px;
+    width: 100%;
+    max-width: 750px;
+    position: relative;
+    z-index: 2;
 }
 
-@media (max-width: 850px) {
-    .container { grid-template-columns: 1fr; }
+header {
+    text-align: center;
+    margin-bottom: 35px;
 }
 
-header { text-align: center; margin-bottom: 20px; }
-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin: 5px 0; color: var(--paper-cream); }
-.crest { font-size: 0.75rem; letter-spacing: 2px; color: var(--accent-gold); font-weight: 600; }
-.subtitle { font-style: italic; color: #A0AAB2; font-size: 0.95rem; margin: 0; }
+header .est {
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    color: var(--glow-gold);
+    display: block;
+    margin-bottom: 5px;
+}
+
+header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.2rem;
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(255, 209, 102, 0.4);
+}
+
+header .subtitle {
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
 
 .card {
-    background-color: var(--paper-cream);
-    border: 2px solid var(--accent-gold);
-    border-radius: 10px;
-    padding: 25px;
-    margin-bottom: 25px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 209, 102, 0.3);
+    border-radius: 16px;
+    padding: 26px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    position: relative;
 }
 
-h2 { font-family: 'Playfair Display', serif; margin-top: 0; font-size: 1.4rem; color: var(--accent-green); }
-.section-desc { font-size: 0.85rem; color: #666; margin-top: -10px; margin-bottom: 15px; }
+.card h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--glow-gold);
+    margin-bottom: 6px;
+}
 
-/* Prompt Box */
-.category-select { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: 500; }
-select { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: #FFF; font-family: inherit; }
+.section-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+select, input[type="text"] {
+    background: var(--card-inner);
+    color: var(--text-light);
+    padding: 10px 14px;
+    border: 1px solid var(--forest-green);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    flex: 1;
+    outline: none;
+}
+
+select:focus, input[type="text"]:focus {
+    border-color: var(--glow-gold);
+}
 
 .prompt-box {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    padding: 20px;
-    border-radius: 8px;
-    min-height: 70px;
+    background: #12191a;
+    border: 1px solid var(--lantern-amber);
+    box-shadow: inset 0 0 15px rgba(255, 159, 28, 0.15), 0 0 15px rgba(255, 209, 102, 0.1);
+    border-radius: 10px;
+    padding: 22px;
+    min-height: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: #fff6e5;
+    margin-bottom: 18px;
+    line-height: 1.6;
+}
+
+.button-group {
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--lantern-amber);
+    color: #101618;
+}
+
+.btn-primary:hover {
+    background: var(--glow-gold);
+    box-shadow: 0 0 14px rgba(255, 209, 102, 0.5);
+}
+
+.btn-secondary {
+    background: var(--forest-green);
+    color: var(--text-light);
+}
+
+.btn-secondary:hover {
+    background: var(--moss-green);
+}
+
+textarea {
+    width: 100%;
+    height: 130px;
+    background: var(--card-inner);
+    color: var(--text-light);
+    padding: 14px;
+    border: 1px solid var(--forest-green);
+    border-radius: 10px;
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+}
+
+textarea:focus {
+    border-color: var(--glow-gold);
+}
+
+.jar-list {
+    list-style: none;
+    background: var(--card-inner);
+    border: 1px solid var(--forest-green);
+    border-radius: 10px;
+    padding: 14px;
+    min-height: 50px;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
     margin-bottom: 15px;
 }
 
-#prompt-display { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin: 0; }
-
-/* Buttons */
-.button-group { display: flex; gap: 10px; }
-button {
-    background: var(--accent-green);
-    color: var(--paper-cream);
-    border: 1px solid var(--accent-gold);
-    padding: 10px 18px;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s ease;
+.results-box {
+    background: var(--card-inner);
+    border: 1px solid var(--forest-green);
+    border-radius: 10px;
+    padding: 16px;
 }
-
-button:hover { background: var(--accent-gold); color: var(--bg-navy); }
-.secondary-btn { background: #E8E2D5; color: var(--text-dark); border-color: var(--border-color); }
-.secondary-btn:hover { background: #D8CEBB; }
-
-/* Draft Pad */
-textarea {
-    width: 100%;
-    height: 180px;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    font-family: 'Georgia', serif;
-    font-size: 1rem;
-    box-sizing: border-box;
-    resize: vertical;
-}
-
-.draft-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.85rem; color: #777; }
-
-/* Prompt Jar */
-.jar-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; }
-.jar-list li {
-    background: var(--card-bg);
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-    font-family: 'Playfair Display', serif;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.jar-list button { padding: 2px 6px; font-size: 0.75rem; background: #C94A4A; border: none; }
-
-/* Dictionary */
-.search-box { display: flex; gap: 8px; margin-bottom: 12px; }
-.search-box input { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); }
-.dict-results { font-size: 0.9rem; line-height: 1.4; background: var(--card-bg); padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); min-height: 80px; }
-.dict-results .word { font-weight: bold; font-size: 1.1rem; color: var(--accent-green); }
-.dict-results .part { font-style: italic; color: #666; font-size: 0.8rem; }

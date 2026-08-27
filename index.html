@@ -3,77 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Literati — Poetry & Creative Suite</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Literati | Poetry Workspace</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <div class="container">
-        <!-- Main Writing & Generator Hub -->
-        <main class="main-content">
-            <header>
-                <span class="crest">✦ EST. 2026 ✦</span>
-                <h1>Literati</h1>
-                <p class="subtitle">A Curated Workspace for the Poetic Mind</p>
-            </header>
+    <!-- Floating Fireflies -->
+    <div class="fireflies">
+        <div class="firefly"></div>
+        <div class="firefly"></div>
+        <div class="firefly"></div>
+        <div class="firefly"></div>
+        <div class="firefly"></div>
+        <div class="firefly"></div>
+    </div>
 
-            <!-- Prompt Generator Section -->
-            <section class="card prompt-section">
-                <div class="category-select">
-                    <label for="category">Category:</label>
-                    <select id="category">
-                        <option value="darkAcademia">Dark Academia</option>
-                        <option value="romanticism">Romanticism & Nature</option>
-                        <option value="modern">Modern & Free-Verse</option>
-                        <option value="forms">Forms & Meter Constraints</option>
+    <div class="container">
+        <header>
+            <span class="est">✦ EST. 2026 ✦</span>
+            <h1>Literati</h1>
+            <p class="subtitle">A Curated Workspace for the Poetic Mind</p>
+        </header>
+
+        <main>
+            <!-- Prompt Generator Card -->
+            <section class="card">
+                <div class="form-group">
+                    <label for="categorySelect">Category:</label>
+                    <select id="categorySelect">
+                        <option value="nature">Nature & Wilderness</option>
+                        <option value="dark-academia">Dark Academia</option>
+                        <option value="melancholy">Melancholy & Nostalgia</option>
+                        <option value="romantic">Romanticism</option>
                     </select>
                 </div>
 
-                <div class="prompt-box">
-                    <p id="prompt-display">Select a category and hit generate...</p>
+                <div id="promptDisplay" class="prompt-box">
+                    Select a category and hit generate...
                 </div>
 
                 <div class="button-group">
-                    <button id="generate-btn">Generate Prompt</button>
-                    <button id="save-prompt-btn" class="secondary-btn">📌 Pin to Jar</button>
+                    <button type="button" onclick="handleGenerate()" class="btn btn-primary">Generate Prompt</button>
+                    <button type="button" onclick="handlePin()" class="btn btn-secondary">📌 Pin to Jar</button>
                 </div>
             </section>
 
-            <!-- Poetry Drafts & Scratchpad -->
-            <section class="card draft-section">
+            <!-- Drafts & Ideas Pad -->
+            <section class="card">
                 <h2>Drafts & Ideas Pad</h2>
-                <textarea id="draft-input" placeholder="Jot down your stanzas, line ideas, or rough thoughts here..."></textarea>
-                <div class="draft-footer">
-                    <button id="save-draft-btn" class="secondary-btn">Save Draft</button>
-                    <span id="draft-status">Draft saved automatically</span>
+                <textarea id="draftArea" placeholder="Jot down your stanzas, line ideas, or full poems"></textarea>
+            </section>
+
+            <!-- The Prompt Jar -->
+            <section class="card">
+                <h2>The Prompt Jar </h2>
+                <p class="section-desc">Saved inspiration for later</p>
+                <ul id="jarList" class="jar-list"></ul>
+            </section>
+
+            <!-- Lexicon Lookup -->
+            <section class="card">
+                <h2>Lexicon Lookup </h2>
+                <div class="search-box">
+                    <input type="text" id="dictInput" placeholder="Type a word..." onkeypress="if(event.key==='Enter') handleSearch()">
+                    <button type="button" onclick="handleSearch()" class="btn btn-primary">Search</button>
+                </div>
+                <div id="dictResults" class="results-box">
+                    Definitions & synonyms will appear here.
                 </div>
             </section>
         </main>
-
-        <!-- Sidebar Tools (Jar & Dictionary) -->
-        <aside class="sidebar">
-            <!-- Prompt Jar / Board -->
-            <section class="card jar-section">
-                <h2>The Prompt Jar 🏺</h2>
-                <p class="section-desc">Saved inspiration for later</p>
-                <ul id="prompt-jar" class="jar-list">
-                    <!-- Saved prompts render here -->
-                </ul>
-            </section>
-
-            <!-- Dictionary & Thesaurus Lookup -->
-            <section class="card dictionary-section">
-                <h2>Lexicon Lookup 📖</h2>
-                <div class="search-box">
-                    <input type="text" id="dict-input" placeholder="Type a word...">
-                    <button id="dict-btn">Search</button>
-                </div>
-                <div id="dict-results" class="dict-results">
-                    <p class="placeholder-text">Definitions & synonyms will appear here.</p>
-                </div>
-            </section>
-        </aside>
     </div>
 
     <script src="script.js"></script>
