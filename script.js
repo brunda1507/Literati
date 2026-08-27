@@ -1,4 +1,17 @@
-// Procedural Prompt Generator Engine
+// --- 1. Instant Local Offline Lexicon (Zero Latency) ---
+const localLexicon = {
+    "cloud": { pos: "noun", def: "A visible mass of condensed water vapor floating in the atmosphere.", syn: "mist, vapor, haze, overcast, gloom" },
+    "lake": { pos: "noun", def: "A large body of water surrounded by land.", syn: "tarn, pond, lagoon, waters, reservoir" },
+    "rain": { pos: "noun", def: "Moisture condensed from the atmosphere that falls in drops.", syn: "downpour, drizzle, shower, precipitation, storm" },
+    "shadow": { pos: "noun", def: "A dark area or shape produced by a body coming between rays of light and a surface.", syn: "shade, gloom, darkness, silhouette, twilight" },
+    "moon": { pos: "noun", def: "The natural satellite of the earth, visible by reflected light from the sun.", syn: "orb, crescent, satellite, night-light" },
+    "whisper": { pos: "verb/noun", def: "Speak softly using one's breath rather than throat vocal cords.", syn: "murmur, rustle, breathe, sigh, mutter" },
+    "silence": { pos: "noun", def: "Complete absence of sound.", syn: "stillness, quiet, hush, peace, tranquility" },
+    "star": { pos: "noun", def: "A luminous point in the night sky that is a large, remote incandescent body.", syn: "spark, beacon, luminary, sun" },
+    "forest": { pos: "noun", def: "A large area covered chiefly with trees and undergrowth.", syn: "woods, woodland, grove, canopy, jungle" }
+};
+
+// --- 2. Procedural Prompt Generator Engine ---
 const grammar = {
     "dark-academia": {
         action: ["Write about discovering", "Compose lines describing", "Craft a stanza on", "Detail the story of"],
@@ -28,7 +41,6 @@ const grammar = {
 
 let currentPromptText = "";
 
-// Dynamic Generator Function
 window.handleGenerate = function() {
     const categorySelect = document.getElementById("categorySelect");
     const promptDisplay = document.getElementById("promptDisplay");
@@ -36,7 +48,6 @@ window.handleGenerate = function() {
     const category = (categorySelect && categorySelect.value) ? categorySelect.value : "nature";
     const set = grammar[category] || grammar["nature"];
     
-    // Pick 1 random element from each bucket to assemble a procedural prompt
     const act = set.action[Math.floor(Math.random() * set.action.length)];
     const obj = set.object[Math.floor(Math.random() * set.object.length)];
     const loc = set.setting[Math.floor(Math.random() * set.setting.length)];
@@ -93,6 +104,7 @@ window.removeJarItem = function(index) {
     window.renderJar();
 };
 
+// --- 3. Ultra-Fast Hybrid Lookup (Local Instant Fallback + Datamuse API) ---
 window.handleSearch = async function() {
     const dictInput = document.getElementById("dictInput");
     const dictResults = document.getElementById("dictResults");
@@ -101,59 +113,65 @@ window.handleSearch = async function() {
     const word = dictInput.value.trim().toLowerCase();
     if (!word) return;
 
-    dictResults.innerHTML = "<p style='color: var(--text-muted);'>Searching lexicon...</p>";
-
-    try {
-        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-        if (!response.ok) throw new Error("Word not found");
-
-        const data = await response.json();
-        const entry = data[0];
-
-        let chosenDef = null;
-        let chosenMeaning = null;
-        let collectedSynonyms = [];
-
-        for (const meaning of entry.meanings) {
-            if (meaning.synonyms) collectedSynonyms.push(...meaning.synonyms);
-
-            for (const defObj of meaning.definitions) {
-                if (defObj.synonyms) collectedSynonyms.push(...defObj.synonyms);
-
-                const defText = defObj.definition.toLowerCase();
-                const isObsolete = defText.includes("obsolete") || defText.includes("archaic") || defText.includes("historical");
-
-                if (!chosenDef && !isObsolete) {
-                    chosenDef = defObj;
-                    chosenMeaning = meaning;
-                }
-            }
-        }
-
-        if (!chosenDef) {
-            chosenMeaning = entry.meanings[0];
-            chosenDef = chosenMeaning.definitions[0];
-        }
-
-        const uniqueSynonyms = [...new Set(collectedSynonyms)];
-        const synonymDisplay = uniqueSynonyms.length > 0 
-            ? uniqueSynonyms.slice(0, 5).join(", ") 
-            : "None found";
-
-        const phonetic = entry.phonetic || (entry.phonetics.find(p => p.text)?.text) || "";
-
+    // Check offline dictionary first for instant speed
+    if (localLexicon[word]) {
+        const item = localLexicon[word];
         dictResults.innerHTML = `
-            <div style="font-size: 1.15rem; font-weight: bold; color: var(--glow-gold); margin-bottom: 4px;">
-                ${entry.word} 
-                <span style="font-size: 0.85rem; font-weight: normal; font-style: italic; color: var(--text-muted);">
-                    (${chosenMeaning.partOfSpeech}) ${phonetic}
+            <div style="font-size: 1.2rem; font-weight: bold; color: var(--glow-gold); margin-bottom: 6px;">
+                ${word} 
+                <span style="font-size: 0.9rem; font-weight: normal; font-style: italic; color: var(--text-muted);">
+                    (${item.pos})
                 </span>
             </div>
-            <p style="margin: 6px 0;"><strong>Def:</strong> ${chosenDef.definition}</p>
-            <p style="margin: 6px 0; color: var(--text-muted);"><strong>Synonyms:</strong> ${synonymDisplay}</p>
+            <p style="margin: 6px 0; color: var(--text-light); line-height: 1.5;">
+                <strong style="color: var(--lantern-amber);">Definition:</strong> ${item.def}
+            </p>
+            <p style="margin: 6px 0; color: var(--text-muted);">
+                <strong style="color: var(--lantern-amber);">Synonyms:</strong> ${item.syn}
+            </p>
         `;
+        return;
+    }
+
+    dictResults.innerHTML = `<p style="color: var(--text-muted); font-style: italic;">Fetching definitions for "${word}"...</p>`;
+
+    // Fast API fallback using Datamuse (high speed, no strict rate limits)
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2500); // 2.5s strict timeout limit
+
+        const res = await fetch(`https://api.datamuse.com/words?rel_syn=${encodeURIComponent(word)}&md=d&max=5`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) throw new Error("API unreachable");
+        const data = await res.json();
+
+        let synonyms = data.map(item => item.word);
+        let definition = "Definition not available in quick lookup.";
+
+        if (data.length > 0 && data[0].defs && data[0].defs.length > 0) {
+            definition = data[0].defs[0].replace(/^[a-z]+\s+/, '');
+        }
+
+        const synDisplay = synonyms.length > 0 ? synonyms.join(", ") : "None found";
+
+        dictResults.innerHTML = `
+            <div style="font-size: 1.2rem; font-weight: bold; color: var(--glow-gold); margin-bottom: 6px;">
+                ${word}
+            </div>
+            <p style="margin: 6px 0; color: var(--text-light); line-height: 1.5;">
+                <strong style="color: var(--lantern-amber);">Definition:</strong> ${definition}
+            </p>
+            <p style="margin: 6px 0; color: var(--text-muted);">
+                <strong style="color: var(--lantern-amber);">Synonyms:</strong> ${synDisplay}
+            </p>
+        `;
+
     } catch (err) {
-        dictResults.innerHTML = `<p style="color: #e74c3c;">No definitions found for "${word}". Try another word!</p>`;
+        dictResults.innerHTML = `
+            <div style="font-size: 1.1rem; font-weight: bold; color: var(--glow-gold); margin-bottom: 4px;">${word}</div>
+            <p style="color: #ff8b8b; margin-top: 4px;">Could not connect to external server. Try common words like <em>cloud, rain, shadow, lake, whisper</em> for instant local results!</p>
+        `;
     }
 };
 
